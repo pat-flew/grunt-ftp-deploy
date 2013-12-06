@@ -91,15 +91,30 @@ module.exports = function (grunt) {
 
   // A method for uploading a single file
   function ftpPut (inFilename, done) {
+    
+    var transferred = 0, total = 0;
+    
     var fpath = path.normalize(localRoot + path.sep + currPath + path.sep + inFilename);
     ftp.put(fpath, inFilename, function (err) {
       if (err) {
         log.error('Cannot upload file: ' + inFilename + ' --> ' + err);
         done(err);
       } else {
+        process.stdout.clearLine();
+        process.stdout.cursorTo(0); 
+        grunt.log.write('Transferred ' + total.toString().yellow + 'b'.yellow + ' of ' + total.toString().yellow + 'b'.yellow + ' (100%)');  
+        grunt.log.writeln();
         log.ok('Uploaded file: ' + inFilename.green + ' to: ' + currPath.yellow);
         done(null);
       }
+    });
+    
+    ftp.on('progress', function(data) {
+      transferred += data.chunksize;
+      total = data.total;
+      process.stdout.clearLine();
+      process.stdout.cursorTo(0); 
+      grunt.log.write('Transferred ' + transferred.toString().yellow + 'b'.yellow + ' of ' + data.total.toString().yellow + 'b'.yellow + ' (' + Math.round((100/data.total) * transferred) + '%)');
     });
   }
 
