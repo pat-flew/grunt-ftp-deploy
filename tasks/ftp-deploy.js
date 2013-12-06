@@ -94,6 +94,10 @@ module.exports = function (grunt) {
     
     var transferred = 0, total = 0;
     
+    ftp.setMaxListeners(0);
+    
+    log.writeln('Uploading file: ' + inFilename.green + ' to: ' + currPath.yellow);
+    
     var fpath = path.normalize(localRoot + path.sep + currPath + path.sep + inFilename);
     ftp.put(fpath, inFilename, function (err) {
       if (err) {
