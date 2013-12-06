@@ -156,9 +156,13 @@ module.exports = function (grunt) {
     exclusions = this.data.exclusions || [];
     ftp.useList = true;
     toTransfer = dirParseSync(localRoot);
+    
+    authVals.username = this.data.auth.username;
+    authVals.password = this.data.auth.password;
 
     // Getting all the necessary credentials before we proceed
     var needed = {properties: {}};
+    
     if (!authVals.username) needed.properties.username = {};
     if (!authVals.password) needed.properties.password = {hidden:true};
     prompt.get(needed, function (err, result) {
